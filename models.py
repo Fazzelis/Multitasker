@@ -10,8 +10,8 @@ class User(Base):
     __tablename__ = "user"
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4())
     email = Column(String, unique=True)
-    name = Column(String, unique=True)
-    avatar = Column(String, unique=True)
+    name = Column(String, unique=True, nullable=True)
+    avatar = Column(String, unique=True, nullable=True)
     hashed_password = Column(String)
     reset_code = relationship("ResetCode", back_populates="user", uselist=False)
 

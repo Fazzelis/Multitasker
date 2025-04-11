@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2111607b-19b3-43c4-b7f3-f6a3d76f334f" name="Changes" comment="Добавил endpoint (/register-user), подключил postgresql, добавил crud запросы на поиск пользователя в таблице по id и email, создание нового пользователя, добавил сущность user, добавил хэширование пароля через bcrypr">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="2111607b-19b3-43c4-b7f3-f6a3d76f334f" name="Changes" comment="реализовал восстановление пароля">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/crud.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
@@ -37,13 +37,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.test.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.main.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -76,12 +77,24 @@
       <option name="project" value="LOCAL" />
       <updated>1741349088324</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="реализовал восстановление пароля">
+      <option name="closed" value="true" />
+      <created>1743146233634</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1743146233636</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.key" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
     <MESSAGE value="Добавил endpoint (/register-user), подключил postgresql, добавил crud запросы на поиск пользователя в таблице по id и email, создание нового пользователя, добавил сущность user, добавил хэширование пароля через bcrypr" />
-    <option name="LAST_COMMIT_MESSAGE" value="Добавил endpoint (/register-user), подключил postgresql, добавил crud запросы на поиск пользователя в таблице по id и email, создание нового пользователя, добавил сущность user, добавил хэширование пароля через bcrypr" />
+    <MESSAGE value="реализовал восстановление пароля" />
+    <option name="LAST_COMMIT_MESSAGE" value="реализовал восстановление пароля" />
   </component>
 </project>

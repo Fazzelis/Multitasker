@@ -1,9 +1,12 @@
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 import uuid
 from datetime import datetime, timedelta
 
 from models import User, ResetCode
 from schemas import *
+from utils import *
 
 
 def get_user_by_id(db: Session, id: uuid) -> User | None:
@@ -17,7 +20,6 @@ def get_user_by_email(db: Session, email: str) -> User | None:
 def post_user(db: Session, new_user: UserCreate) -> User | None:
     db_user = User(
         email=new_user.email,
-        name=new_user.name,
         hashed_password=new_user.password
     )
     db.add(db_user)
@@ -49,3 +51,55 @@ def get_reset_code(db: Session, email: str) -> ResetCode | None:
 def delete_reset_code(db: Session, code: ResetCode) -> None:
     db.delete(code)
     db.commit()
+
+
+def patch_user_name(db: Session, new_name: str, email: str) -> UserProfileWithoutPassword:
+    db_user = db.query(User).filter(User.email.like(email)).first()
+    db_user.name = new_name
+    db.add(db_user)
+    db.commit()
+    return UserProfileWithoutPassword(
+        email=db_user.email,
+        name=db_user.name,
+        avatar_path=db_user.avatar
+    )
+
+
+def patch_user_avatar(db: Session, email: str, avatar) -> UserProfileWithoutPassword:
+    avatar_path = save_avatar(email, avatar)
+    db_user = db.query(User).filter(User.email.like(email)).first()
+    db_user.avatar = avatar_path
+    db.add(db_user)
+    db.commit()
+    return UserProfileWithoutPassword(
+        email=db_user.email,
+        name=db_user.name,
+        avatar_path=db_user.avatar
+    )
+
+
+def get_user_via_jwt(db: Session, email: str):
+    db_user = get_user_by_email(db=db, email=email)
+    if db_user is not None:
+        return UserProfileWithoutPassword(
+            email=db_user.email,
+            name=db_user.name,
+            avatar_path=db_user.avatar
+        )
+    else:
+        raise HTTPException(
+            status_code=401,
+            detail="token invalid"
+        )
+
+
+def path_user_email(db: Session, email: str, new_email: str) -> UserProfileWithoutPassword:
+    db_user = db.query(User).filter(User.email.like(email)).first()
+    db_user.email = new_email
+    db.add(db_user)
+    db.commit()
+    return UserProfileWithoutPassword(
+        email=db_user.email,
+        name=db_user.name,
+        avatar_path=db_user.avatar
+    )
