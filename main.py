@@ -38,7 +38,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     created_user = post_user(db, user)
 
     jwt_payload = {
-        "sub": created_user.email,
+        "sub": str(created_user.id),
         "email": created_user.email
     }
     token = encode_jwt(payload=jwt_payload)
@@ -56,7 +56,7 @@ def authorization(user: UserAuthorization, db: Session = Depends(get_db)):
         return HTTPException(status_code=404, detail="User not found")
     if match_hash(user.password, db_user.hashed_password):
         jwt_payload = {
-            "sub": db_user.email,
+            "sub": str(db_user.id),
             "email": db_user.email
         }
         token = encode_jwt(payload=jwt_payload)
@@ -163,7 +163,7 @@ def authorization_via_jwt(credentials: HTTPAuthorizationCredentials = Depends(ht
             "details": "token expired"
         }
 
-
+# Возможно нужно реализовать подтверждение пользователя через код, который будет отправлен на почту
 @app.patch("/change-email")
 def change_email(
         new_user_email: NewUserEmail,
@@ -176,7 +176,7 @@ def change_email(
         user_email = payload.get("email")
         return {
             "status": "success",
-            "UserInfo": path_user_email(db, user_email, new_user_email.new_user_email)
+            "updateInformation": path_user_email(db, user_email, new_user_email.new_user_email)
         }
     except ExpiredSignatureError:
         return {

@@ -20,6 +20,7 @@ def get_user_by_email(db: Session, email: str) -> User | None:
 def post_user(db: Session, new_user: UserCreate) -> User | None:
     db_user = User(
         email=new_user.email,
+        name=new_user.email,
         hashed_password=new_user.password
     )
     db.add(db_user)
@@ -93,13 +94,26 @@ def get_user_via_jwt(db: Session, email: str):
         )
 
 
-def path_user_email(db: Session, email: str, new_email: str) -> UserProfileWithoutPassword:
+def path_user_email(db: Session, email: str, new_email: str):
     db_user = db.query(User).filter(User.email.like(email)).first()
     db_user.email = new_email
     db.add(db_user)
     db.commit()
-    return UserProfileWithoutPassword(
+    new_payload = {
+        "sub": str(db_user.id),
+        "email": db_user.email
+    }
+    new_token = encode_jwt(payload=new_payload)
+    token_info = TokenInfo(
+        token=new_token,
+        token_type="Bearer"
+    )
+    user_password_without_password = UserProfileWithoutPassword(
         email=db_user.email,
         name=db_user.name,
         avatar_path=db_user.avatar
     )
+    return {
+        "UserInfo": user_password_without_password,
+        "TokenInfo": token_info
+    }

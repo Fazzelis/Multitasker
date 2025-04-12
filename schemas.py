@@ -21,11 +21,6 @@ class UserAuthorization(UserBase):
     password: str
 
 
-class UserProfile(UserCreate):
-    name: str | None
-    avatar_path: str | None
-
-
 class UserProfileWithoutPassword(UserBase):
     name: str | None
     avatar_path: str | None
