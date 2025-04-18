@@ -1,3 +1,5 @@
+import uuid
+
 from pydantic import BaseModel, EmailStr
 
 
@@ -34,3 +36,31 @@ class UserNewPassword(UserBase):
 class TokenInfo(BaseModel):
     token: str
     token_type: str
+
+
+class CategoryDto(BaseModel):
+    name: str
+
+
+class CategoryDtoPatch(CategoryDto):
+    new_name: str
+
+
+class ProjectDto(BaseModel):
+    name: str
+
+
+class ProjectDtoWithCategoryId(ProjectDto):
+    category_id: str
+
+
+class ProjectDtoPatch(ProjectDto):
+    new_name: str
+
+
+class Task(BaseModel):
+    name: str
+    description: str
+    due_date: str
+    indicator: int
+

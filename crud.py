@@ -1,10 +1,10 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, UploadFile
 from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 import uuid
 from datetime import datetime, timedelta
 
-from models import User, ResetCode
+from models import *
 from schemas import *
 from utils import *
 
@@ -67,7 +67,7 @@ def patch_user_name(db: Session, new_name: str, email: str) -> UserProfileWithou
 
 
 def patch_user_avatar(db: Session, email: str, avatar) -> UserProfileWithoutPassword:
-    avatar_path = save_avatar(email, avatar)
+    avatar_path = save_user_avatar(email, avatar)
     db_user = db.query(User).filter(User.email.like(email)).first()
     db_user.avatar = avatar_path
     db.add(db_user)
@@ -117,3 +117,88 @@ def path_user_email(db: Session, email: str, new_email: str):
         "UserInfo": user_password_without_password,
         "TokenInfo": token_info
     }
+
+
+def post_category(db: Session, user_id: UUID, category_name: str):
+    new_category = Category(
+        name=category_name,
+        user_id=user_id
+    )
+    db.add(new_category)
+    db.commit()
+    return {
+        "CategoryName": new_category.name,
+        "UserId": new_category.user_id,
+        "UserName": new_category.user.name
+    }
+
+
+def patch_category(db: Session, user_id: UUID, old_category_name: str, new_category_name: str):
+    old_category = db.query(Category).filter(Category.user_id == user_id).filter(Category.name.like(old_category_name)).first()
+    if not old_category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    old_category.name = new_category_name
+    db.add(old_category)
+    db.commit()
+    return {
+        "id": old_category.id,
+        "NewName": new_category_name
+    }
+
+
+def delete_category(db: Session, user_id: UUID, category_name: str):
+    category = db.query(Category).filter(Category.user_id == user_id).filter(Category.name.like(category_name)).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    db.delete(category)
+    db.commit()
+    return {
+        "DeletedCategoryId": category.id,
+        "DeletedCategoryName": category.name
+    }
+
+
+def post_project(db: Session, project_name: str, user_id: UUID, category_id: UUID):
+    new_project = Project(
+        name=project_name,
+        user_id=user_id,
+        category_id=category_id
+    )
+    db.add(new_project)
+    db.commit()
+    return {
+        "name": new_project.name,
+        "category_id": new_project.category_id,
+        "user_id": user_id
+    }
+
+
+def set_project_avatar(db: Session, project_name: str, user_id: UUID, user_email: str, avatar: UploadFile) -> str:
+    project = db.query(Project).filter(Project.user_id == user_id).filter(Project.name.like(project_name)).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    avatar_path = save_project_avatar(user_email, project_name, avatar)
+    project.avatar_path = avatar_path
+    db.add(project)
+    db.commit()
+    return "Avatar saved"
+
+
+def patch_project(db: Session, old_project_name: str, new_project_name: str, user_id: UUID) -> str:
+    project = db.query(Project).filter(Project.user_id == user_id).filter(Project.name.like(old_project_name)).one_or_none() # get or none
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    project.name = new_project_name
+    db.add(project)
+    db.commit()
+    db.refresh(project) # добавить refresh
+    return "Project edited"
+
+
+def delete_project(db: Session, user_id: UUID, project_name: str) -> str:
+    project = db.query(Project).filter(Project.user_id == user_id).filter(Project.name.like(project_name)).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    db.delete(project)
+    db.commit()
+    return "Project deleted"

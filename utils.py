@@ -52,9 +52,17 @@ def generate_and_send_verify_code(to_email: str) -> str:
     return get_password_hash(reset_token)
 
 
-def save_avatar(email: str, avatar) -> str:
+def save_user_avatar(email: str, avatar) -> str:
     filename = f"{email}.{avatar.filename.split('.')[-1]}"
     file_path = os.path.join("src", "users_avatar", filename)
+    with open(file_path, "wb") as new_file:
+        new_file.write(avatar.file.read())
+    return file_path
+
+
+def save_project_avatar(email: str, project_name: str, avatar) -> str:
+    filename = f"{email}_{project_name}.{avatar.filename.split('.')[-1]}"
+    file_path = os.path.join("src", "projects_avatar", filename)
     with open(file_path, "wb") as new_file:
         new_file.write(avatar.file.read())
     return file_path

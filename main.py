@@ -163,7 +163,7 @@ def authorization_via_jwt(credentials: HTTPAuthorizationCredentials = Depends(ht
             "details": "token expired"
         }
 
-# Возможно нужно реализовать подтверждение пользователя через код, который будет отправлен на почту
+
 @app.patch("/change-email")
 def change_email(
         new_user_email: NewUserEmail,
@@ -183,3 +183,163 @@ def change_email(
             "status": "error",
             "details": "token expired"
         }
+
+
+@app.post("/create-category")
+def create_category(
+        new_category: CategoryDto,
+        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+        db: Session = Depends(get_db)
+):
+    try:
+        token = credentials.credentials
+        payload = decode_jwt(token=token)
+        user_id = uuid.UUID(payload["sub"])
+        return {
+            "status": "success",
+            "NewCategoryInfo": post_category(db, user_id, new_category.name)
+        }
+    except ExpiredSignatureError:
+        return {
+            "status": "error",
+            "details": "token expired"
+        }
+
+
+@app.patch("/edit-category")
+def edit_category(
+    category: CategoryDtoPatch,
+    credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+    db: Session = Depends(get_db)
+):
+    try:
+        token = credentials.credentials
+        payload = decode_jwt(token=token)
+        user_id = payload["sub"]
+        return {
+            "status": "success",
+            "EditCategoryInfo": patch_category(db, uuid.UUID(user_id), category.name, category.new_name)
+        }
+    except ExpiredSignatureError:
+        return {
+            "status": "error",
+            "details": "token expired"
+        }
+    except HTTPException as error:
+        raise error
+
+
+@app.delete("/delete-category")
+def remove_category(
+        payload: CategoryDto,
+        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+        db: Session = Depends(get_db)
+):
+    try:
+        token = credentials.credentials
+        decoded_token = decode_jwt(token=token)
+        user_id = decoded_token["sub"]
+        return {
+            "status": "success",
+            "DeleteInfo": delete_category(db, uuid.UUID(user_id), payload.name)
+        }
+    except ExpiredSignatureError:
+        return {
+            "status": "error",
+            "details": "token expired"
+        }
+    except HTTPException as error:
+        raise error
+
+
+@app.post("/create-project")
+def create_project(
+        payload: ProjectDtoWithCategoryId,
+        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+        db: Session = Depends(get_db)
+):
+    try:
+        token = credentials.credentials
+        decoded_token = decode_jwt(token=token)
+        return {
+            "status": "success",
+            "ProjectInfo": post_project(db, payload.name, uuid.UUID(decoded_token["sub"]), uuid.UUID(payload.category_id))
+        }
+    except ExpiredSignatureError:
+        return {
+            "status": "error",
+            "details": "token expired"
+        }
+
+
+@app.patch("/upload-project-avatar")
+def upload_project_avatar(
+        project_name: str,
+        avatar: UploadFile = File(...),
+        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+        db: Session = Depends(get_db)
+):
+    try:
+        if not avatar.filename.lower().endswith((".png", ".jpg", "jpeg")):
+            return HTTPException(status_code=400, detail="Неподдерживаемый формат файла")
+        token = credentials.credentials
+        payload = decode_jwt(token=token)
+        return {
+            "status": "success",
+            "message": set_project_avatar(db, project_name, uuid.UUID(payload["sub"]), payload["email"], avatar)
+        }
+    except ExpiredSignatureError:
+        return {
+            "status": "error",
+            "details": "token expired"
+        }
+    except HTTPException as error:
+        raise error
+
+
+@app.patch("/edit-project")
+def edit_project(
+    new_project: ProjectDtoPatch,
+    credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+    db: Session = Depends(get_db)
+):
+    try:
+        token = credentials.credentials
+        payload = decode_jwt(token)
+        return {
+            "status": "success",
+            "details": patch_project(db, new_project.name, new_project.new_name, uuid.UUID(payload.get("sub")))
+        }
+    except ExpiredSignatureError:
+        return {
+            "status": "error",
+            "details": "token expired"
+        }
+    except HTTPException as error:
+        raise error
+
+
+@app.delete("/remove-project")
+def remove_project(
+        project: ProjectDto,
+        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+        db: Session = Depends(get_db)
+):
+    try:
+        token = credentials.credentials
+        payload = decode_jwt(token=token)
+        return {
+            "status": "success",
+            "message": delete_project(db, uuid.UUID(payload.get("sub")), project.name)
+        }
+    except ExpiredSignatureError:
+        return {
+            "status": "error",
+            "details": "token expired"
+        }
+
+
+@app.post("/create-task")
+def create_task(
+
+):
