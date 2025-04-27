@@ -8,9 +8,6 @@ from email.mime.text import MIMEText
 from email.header import Header
 import secrets
 import jwt
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi import Depends, HTTPException
-from crud import *
 
 
 hashing_password = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -54,15 +51,7 @@ def generate_and_send_verify_code(to_email: str) -> str:
 
 def save_user_avatar(email: str, avatar) -> str:
     filename = f"{email}.{avatar.filename.split('.')[-1]}"
-    file_path = os.path.join("src", "users_avatar", filename)
-    with open(file_path, "wb") as new_file:
-        new_file.write(avatar.file.read())
-    return file_path
-
-
-def save_project_avatar(email: str, project_name: str, avatar) -> str:
-    filename = f"{email}_{project_name}.{avatar.filename.split('.')[-1]}"
-    file_path = os.path.join("src", "projects_avatar", filename)
+    file_path = os.path.join("src", "avatars", filename)
     with open(file_path, "wb") as new_file:
         new_file.write(avatar.file.read())
     return file_path
