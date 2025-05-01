@@ -7,7 +7,6 @@ from utils import *
 from schemas.user_schemas import *
 from service.user_service import UserService
 from schemas.response.user import *
-from schemas.response.avatar import *
 from schemas.response.status import *
 
 
@@ -28,13 +27,13 @@ def set_name(
     return UserService(db).set_name(payload=payload, credentials=credentials)
 
 
-@router.patch("/upload-avatar", response_model=AvatarResponse)
-def upload_avatar(
-        avatar: UploadFile = File(...),
+@router.patch("/set-avatar", response_model=UserResponse)
+def set_avatar(
+        payload: UserSetAvatar,
         credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
         db: Session = Depends(get_db)
-        ):
-    return UserService(db=db).upload_avatar(avatar=avatar, credentials=credentials)
+):
+    return UserService(db).set_avatar(payload, credentials)
 
 
 @router.post("/reset-password", response_model=StatusResponse)

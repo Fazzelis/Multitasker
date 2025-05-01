@@ -12,7 +12,6 @@ from schemas.project_schemas import *
 from schemas.task_schemas import *
 from schemas.sub_task_schemas import *
 from utils import *
-from schemas.avatar_schemas import AvatarBase
 
 
 def get_user_by_id(db: Session, user_id: UUID) -> User | None:
@@ -23,7 +22,7 @@ def get_user_by_email(db: Session, email: str) -> User | None:
     return db.query(User).filter(User.email.like(email)).one_or_none()
 
 
-def post_user(db: Session, new_user: UserCreate) -> User | None:
+def post_user(db: Session, new_user: UserCreateAndAuthorization) -> User | None:
     db_user = User(
         email=new_user.email,
         name=new_user.email,
@@ -62,7 +61,7 @@ def delete_reset_code(db: Session, code: ResetCode) -> None:
 
 def patch_user_name(db: Session, new_name: str, user_id: UUID) -> UserProfileWithoutPassword:
     db_user = db.query(User).filter(User.id == user_id).one_or_none()
-    db_avatar = db.query(Avatar).filter(Avatar.user_id == user_id).one_or_none()
+    db_avatar = db.query(Attachment).filter(Attachment.id == db_user.avatar_id).one_or_none()
     if db_avatar is None:
         avatar_id = None
     else:
@@ -77,25 +76,22 @@ def patch_user_name(db: Session, new_name: str, user_id: UUID) -> UserProfileWit
     )
 
 
-def patch_user_avatar(db: Session, user_id: UUID, avatar) -> AvatarBase:
+def patch_user_avatar(db: Session, user_id: UUID, avatar_id: UUID):
     db_user = db.query(User).filter(User.id == user_id).one_or_none()
-    avatar_path = save_user_avatar(db_user.email, avatar)
-    found_avatar = db.query(Avatar).filter(Avatar.user_id == user_id).one_or_none()
-    if found_avatar is None:
-        found_avatar = Avatar(avatar_path=avatar_path, user_id=user_id)
-    else:
-        found_avatar.avatar_path = avatar_path
-    db.add(found_avatar)
+    db_user.avatar_id = avatar_id
+    db.add(db_user)
     db.commit()
-    return AvatarBase(
-        user_id=user_id,
-        avatar_path=avatar_path
+    db.refresh(db_user)
+    return UserProfileWithoutPassword(
+        email=db_user.email,
+        name=db_user.name,
+        avatar_id=avatar_id
     )
 
 
 def get_user_via_jwt(db: Session, user_id: UUID):
     db_user = get_user_by_id(db, user_id)
-    db_avatar = db.query(Avatar).filter(Avatar.user_id == user_id).one_or_none()
+    db_avatar = db.query(Attachment).filter(Attachment.id == db_user.avatar_id).one_or_none()
     if db_avatar is None:
         avatar_id = None
     else:
@@ -116,7 +112,7 @@ def get_user_via_jwt(db: Session, user_id: UUID):
 def path_user_email(db: Session, user_id: UUID, new_email: str):
     db_user = get_user_by_id(db, user_id)
     db_user.email = new_email
-    db_avatar = db.query(Avatar).filter(Avatar.user_id == user_id).first()
+    db_avatar = db.query(Attachment).filter(Attachment.id == db_user.avatar_id).one_or_none()
     if db_avatar is None:
         avatar_id = None
     else:

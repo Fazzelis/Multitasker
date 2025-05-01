@@ -10,19 +10,19 @@ class NewUserName(BaseModel):
     new_user_name: str
 
 
-class UserCreate(UserBase):
-    password: str
-
-
-class UserAuthorization(UserBase):
+class UserCreateAndAuthorization(UserBase):
     password: str
 
 
 class UserProfileWithoutPassword(UserBase):
     name: str | None
-    avatar_id: UUID
+    avatar_id: UUID | None
 
 
 class UserNewPassword(UserBase):
     verify_code: str
     new_password: str
+
+
+class UserSetAvatar(BaseModel):
+    avatar_id: UUID

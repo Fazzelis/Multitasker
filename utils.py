@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, timedelta, timezone
 
 from passlib.context import CryptContext
@@ -49,11 +50,11 @@ def generate_and_send_verify_code(to_email: str) -> str:
     return get_password_hash(reset_token)
 
 
-def save_user_avatar(email: str, avatar) -> str:
-    filename = f"{email}.{avatar.filename.split('.')[-1]}"
-    file_path = os.path.join("src", "avatars", filename)
+def save_file(file) -> str:
+    filename = f"{uuid.uuid4()}.{file.filename.split('.')[-1]}"
+    file_path = os.path.join("attachments", filename)
     with open(file_path, "wb") as new_file:
-        new_file.write(avatar.file.read())
+        new_file.write(file.file.read())
     return file_path
 
 

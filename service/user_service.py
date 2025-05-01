@@ -8,8 +8,8 @@ from crud.user import *
 from jwt import ExpiredSignatureError
 from datetime import datetime
 from schemas.response.user import *
-from schemas.response.avatar import *
 from schemas.response.status import *
+from crud.attachment import get_attachment_info
 
 
 class UserService:
@@ -32,20 +32,20 @@ class UserService:
         except ExpiredSignatureError:
             raise HTTPException(status_code=401, detail="token expired")
 
-    def upload_avatar(
+    def set_avatar(
             self,
-            credentials: HTTPAuthorizationCredentials,
-            avatar: UploadFile = File(...)
+            payload: UserSetAvatar,
+            credentials: HTTPAuthorizationCredentials
     ):
         try:
-            if not avatar.filename.lower().endswith(('.png', '.jpg', '.jpeg')):
-                raise HTTPException(status_code=400, detail="Неподдерживаемый формат файла")
             token = credentials.credentials
-            payload = decode_jwt(token=token)
-            user_id = uuid.UUID(payload.get("sub"))
-            return AvatarResponse(
+            decoded_token = decode_jwt(token=token)
+            user_id = uuid.UUID(decoded_token.get("sub"))
+            attachment = get_attachment_info(self.db, payload.avatar_id)
+            print(attachment.path)
+            return UserResponse(
                 status="success",
-                avatar_info=patch_user_avatar(self.db, user_id, avatar)
+                info_about_user=patch_user_avatar(self.db, user_id, payload.avatar_id)
             )
         except ExpiredSignatureError:
             raise HTTPException(status_code=401, detail="token expired")

@@ -13,10 +13,10 @@ router = APIRouter(
 
 
 @router.post("/register-user", response_model=AuthorizationRegistrationResponse)
-async def register(user: UserCreate, db: Session = Depends(get_db)):
+async def register(user: UserCreateAndAuthorization, db: Session = Depends(get_db)):
     return AuthService(db).register_user(user)
 
 
 @router.post("/authorization", response_model=AuthorizationRegistrationResponse)
-def authorization(user: UserAuthorization, db: Session = Depends(get_db)):
+async def authorization(user: UserCreateAndAuthorization, db: Session = Depends(get_db)):
     return AuthService(db).authorization(user)

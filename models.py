@@ -11,20 +11,18 @@ class User(Base):
     email = Column(String, unique=True)
     name = Column(String, unique=True)
     hashed_password = Column(String)
+    avatar_id = Column(UUID)
     reset_code = relationship("ResetCode", back_populates="user", uselist=False)
     categories = relationship("Category", back_populates="user")
     projects = relationship("Project", back_populates="user")
     tasks = relationship("Task", back_populates="user")
     subtasks = relationship("SubTask", back_populates="user")
-    avatar = relationship("Avatar", back_populates="user")
 
 
-class Avatar(Base):
-    __tablename__ = "avatar"
+class Attachment(Base):
+    __tablename__ = "attachment"
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, server_default=func.gen_random_uuid())
-    avatar_path = Column(String, unique=True)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), unique=True)
-    user = relationship("User", back_populates="avatar")
+    attachment_path = Column(String, unique=True)
 
 
 class ResetCode(Base):

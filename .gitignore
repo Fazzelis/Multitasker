@@ -1,6 +1,6 @@
 /.env
 /.venv/
-/src/
+/attachments/
 /private.key
 /private.key.pub
 /public.key

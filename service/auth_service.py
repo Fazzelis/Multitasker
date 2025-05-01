@@ -2,7 +2,6 @@ from crud.user import *
 from fastapi import HTTPException
 from schemas.user_schemas import *
 from sqlalchemy.orm import Session
-from crud.avatar import get_avatar_id_by_user_id
 from schemas.response.auth import *
 
 
@@ -10,7 +9,7 @@ class AuthService:
     def __init__(self, db: Session):
         self.db = db
 
-    def register_user(self, user: UserCreate):
+    def register_user(self, user: UserCreateAndAuthorization):
         if len(user.password) < 8 or len(user.password) > 16:
             raise HTTPException(status_code=422, detail="Password does not pass validation")
         db_user = get_user_by_email(self.db, user.email)
@@ -32,7 +31,7 @@ class AuthService:
             token_info=token_info
         )
 
-    def authorization(self, user: UserAuthorization):
+    def authorization(self, user: UserCreateAndAuthorization):
         db_user = get_user_by_email(self.db, user.email)
         if db_user is None:
             raise HTTPException(status_code=404, detail="User not found")
