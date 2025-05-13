@@ -37,7 +37,7 @@ def get_all_categories(
 
 @router.patch("/edit-category", response_model=CategoryResponse)
 def edit_category(
-    category: CategoryDtoPatchDelete,
+    category: CategoryDtoPatch,
     credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
     db: Session = Depends(get_db)
 ):
@@ -46,7 +46,7 @@ def edit_category(
 
 @router.delete("/delete-category", response_model=CategoryResponse)
 def remove_category(
-        payload: CategoryDtoPatchDelete,
+        payload: CategoryDtoDelete,
         credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
         db: Session = Depends(get_db)
 ):

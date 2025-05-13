@@ -1,17 +1,11 @@
-from fastapi import Depends, HTTPException, UploadFile
-from fastapi.security import HTTPAuthorizationCredentials
-from sqlalchemy.orm import Session
-import uuid
 from datetime import datetime, timedelta
+from uuid import UUID
 
-from models import *
-from schemas.user_schemas import *
-from schemas.token_schemas import *
-from schemas.category_schemas import *
-from schemas.project_schemas import *
-from schemas.task_schemas import *
-from schemas.sub_task_schemas import *
-from utils import *
+from fastapi import HTTPException
+from sqlalchemy.orm import Session
+
+from models import User, ResetCode, Attachment
+from schemas.user_schemas import UserCreateAndAuthorization, UserProfileWithoutPassword
 
 
 def get_user_by_id(db: Session, user_id: UUID) -> User | None:

@@ -49,7 +49,7 @@ class CategoryService:
 
     def edit_category(
             self,
-            category: CategoryDtoPatchDelete,
+            category: CategoryDtoPatch,
             credentials: HTTPAuthorizationCredentials
     ):
         try:
@@ -67,7 +67,7 @@ class CategoryService:
 
     def remove_category(
             self,
-            payload: CategoryDtoPatchDelete,
+            payload: CategoryDtoDelete,
             credentials: HTTPAuthorizationCredentials
     ):
         try:

@@ -1,14 +1,12 @@
-from fastapi import File, APIRouter
-from fastapi.security import HTTPBearer
-from jwt import ExpiredSignatureError
-from database.get_database import get_db
-from crud.user import *
-from utils import *
-from schemas.user_schemas import *
-from service.user_service import UserService
-from schemas.response.user import *
-from schemas.response.status import *
+from fastapi import APIRouter, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session
 
+from database.get_database import get_db
+from schemas.response.status import StatusResponse
+from schemas.response.user import UserResponse
+from schemas.user_schemas import NewUserName, UserSetAvatar, UserBase, UserNewPassword
+from service.user_service import UserService
 
 router = APIRouter(
     prefix="/user",

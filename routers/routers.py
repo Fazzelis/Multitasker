@@ -10,7 +10,7 @@ from routers.attachment import router as attachment_router
 router = APIRouter()
 router.include_router(auth_router)
 router.include_router(user_router)
-router.include_router(category_router)
 router.include_router(project_router)
+router.include_router(category_router)
 router.include_router(task_router)
 router.include_router(attachment_router)

@@ -20,14 +20,14 @@ http_bearer = HTTPBearer()
 
 @router.post("/create-project", response_model=ProjectResponse)
 def create_project(
-        payload: ProjectDtoWithCategoryId,
+        payload: ProjectDto,
         credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
         db: Session = Depends(get_db)
 ):
     return ProjectService(db=db).create_project(payload=payload, credentials=credentials)
 
 
-@router.patch("/edit-project", response_model=ProjectResponseWithoutCategoryId)
+@router.patch("/edit-project", response_model=ProjectResponse)
 def edit_project(
     new_project: ProjectDtoPatch,
     credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
@@ -36,9 +36,44 @@ def edit_project(
     return ProjectService(db=db).edit_project(new_project, credentials)
 
 
-@router.delete("/remove-project", response_model=ProjectResponseWithoutCategoryId)
+@router.get("/get-all-project", response_model=AllProjectsResponse)
+def get_all_projects(
+        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+        db: Session = Depends(get_db)
+):
+    return ProjectService(db=db).get_all_projects(credentials)
+
+
+@router.patch("/add-member-into-project", response_model=ProjectResponse)
+def add_member_into_project(
+        payload: ProjectDtoWithMemberId,
+        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+        db: Session = Depends(get_db)
+):
+    return ProjectService(db).add_member_into_project(payload, credentials)
+
+
+@router.patch("/add-category", response_model=ProjectResponse)
+def add_category(
+        payload: ProjectDtoWithCategoryId,
+        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+        db: Session = Depends(get_db)
+):
+    return ProjectService(db).add_category(payload, credentials)
+
+
+@router.patch("/remove-category", response_model=ProjectResponse)
+def remove_category(
+        payload: ProjectDtoWithId,
+        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+        db: Session = Depends(get_db)
+):
+    return ProjectService(db).remove_category(payload, credentials)
+
+
+@router.delete("/remove-project", response_model=ProjectResponse)
 def remove_project(
-        project: ProjectDto,
+        project: ProjectDtoDelete,
         credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
         db: Session = Depends(get_db)
 ):
