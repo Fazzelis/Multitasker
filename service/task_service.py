@@ -2,6 +2,8 @@ from jwt import ExpiredSignatureError
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials
+
+from schemas.project_schemas import ProjectDtoWithId
 from schemas.task_schemas import *
 from utils import decode_jwt
 import uuid
@@ -31,7 +33,7 @@ class TaskService:
         except HTTPException as error:
             raise error
 
-    def get_all_tasks(
+    def get_my_tasks(
             self,
             credentials: HTTPAuthorizationCredentials
     ):
@@ -39,10 +41,28 @@ class TaskService:
             token = credentials.credentials
             payload = decode_jwt(token=token)
             user_id = uuid.UUID(payload["sub"])
-            return {
-                "status": "success",
-                "TaskInfo": get_all_tasks(self.db, user_id)
-            }
+            return MyTasksResponse(
+                status="success",
+                tasks=get_my_tasks(self.db, user_id)
+            )
+        except ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="token expired")
+        except HTTPException as error:
+            raise error
+
+    def view_project_tasks(
+            self,
+            payload: ProjectDtoWithId,
+            credentials: HTTPAuthorizationCredentials
+    ):
+        try:
+            token = credentials.credentials
+            decoded_token = decode_jwt(token=token)
+            user_id = uuid.UUID(decoded_token["sub"])
+            return ProjectTasksResponse(
+                status="success",
+                tasks=view_project_tasks(self.db, payload.project_id, user_id)
+            )
         except ExpiredSignatureError:
             raise HTTPException(status_code=401, detail="token expired")
         except HTTPException as error:

@@ -65,7 +65,7 @@ class ProjectService:
 
     def add_member_into_project(
             self,
-            payload: ProjectDtoWithMemberId,
+            payload: ProjectDtoWithMemberEmail,
             credentials: HTTPAuthorizationCredentials
     ) -> ProjectResponse:
         try:
@@ -74,7 +74,7 @@ class ProjectService:
             user_id = uuid.UUID(decoded_jwt.get("sub"))
             return ProjectResponse(
                 status="success",
-                project=add_member_into_project(self.db, user_id, payload.new_member_id, payload.project_id)
+                project=add_member_into_project(self.db, user_id, payload.member_email, payload.project_id)
             )
         except ExpiredSignatureError:
             raise HTTPException(status_code=401, detail="token expired")
@@ -92,7 +92,7 @@ class ProjectService:
                 status="success",
                 project=remove_member_from_project(
                     db=self.db,
-                    member_id=payload.new_member_id,
+                    member_id=payload.member_id,
                     project_id=payload.project_id,
                     user_id=user_id
                 )

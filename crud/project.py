@@ -16,6 +16,10 @@ from sqlalchemy import exists
 
 
 def post_project(db: Session, project_name: str, user_id: UUID):
+    db_projects = db.query(Project).filter(Project.creator_id == user_id).all()
+    for project in db_projects:
+        if project_name == project.name:
+            raise HTTPException(status_code=400, detail="Project with this name already exist")
     new_project = Project(
         name=project_name,
         creator_id=user_id,
@@ -76,14 +80,14 @@ def get_projects(db: Session, user_id: UUID) -> [ProjectDtoInfo]:
     return response
 
 
-def add_member_into_project(db: Session, user_id: UUID, member_id: UUID, project_id: UUID):
+def add_member_into_project(db: Session, user_id: UUID, member_email: str, project_id: UUID):
     db_user = db.query(User).filter(User.id == user_id).one_or_none()
     db_project = db.query(Project).filter(Project.id == project_id).one_or_none()
     if not db_project:
         raise HTTPException(status_code=404, detail="Project not found")
     if db_project.creator_id != user_id and not db_user.is_admin:
         raise HTTPException(status_code=403, detail="Access denied")
-    db_new_member = db.query(User).filter(User.id == member_id).one_or_none()
+    db_new_member = db.query(User).filter(User.email.like(member_email)).one_or_none()
     if not db_new_member:
         # Написать логику приглашения в приложение с помощью отправки сообщения на почту
         raise HTTPException(status_code=404, detail="User not found")
@@ -157,7 +161,7 @@ def add_category(db: Session, user_id: UUID, project_id: UUID, category_id: UUID
     if not db_project:
         raise HTTPException(status_code=404, detail="Project not found")
     db_category = db.query(Category).filter(Category.id == category_id).one_or_none()
-    if not db_category:
+    if not db_category or db_category.user_id != user_id:
         raise HTTPException(status_code=404, detail="Category not found")
     db_user = db.query(User).filter(User.id == user_id).one_or_none()
     if db_user not in db_project.users:
@@ -195,14 +199,7 @@ def delete_project(db: Session, user_id: UUID, project_id: UUID) -> ProjectDto:
         raise HTTPException(status_code=404, detail="Project not found")
     db_user = db.query(User).filter(User.id == user_id).one_or_none()
     if db_project.creator_id != user_id and not db_user.is_admin:
-        if db_user in db_project.users:
-            db_project.users.remove(db_user)
-            db.add(db_project)
-            db.commit()
-            return ProjectDto(
-                project_id=db_project.id,
-                name=db_project.name
-            )
+        raise HTTPException(status_code=403, detail="Access denied")
     db.delete(db_project)
     db.commit()
     return ProjectDto(

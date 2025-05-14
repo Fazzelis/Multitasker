@@ -51,8 +51,58 @@ def post_task(db: Session, payload: TaskCreate, user_id: UUID):
     )
 
 
-def get_all_tasks(db: Session, user_id: UUID):
-    pass
+def get_my_tasks(db: Session, user_id: UUID):
+    db_user = db.query(User).filter(User.id == user_id).one_or_none()
+    tasks = db.query(Task).filter(Task.executor_email.like(db_user.email)).all()
+    response_tasks = []
+    for task in tasks:
+        response_tasks.append(TaskBase(
+            name=task.name,
+            description=task.description,
+            due_date=task.due_date,
+            indicator=task.indicator,
+            creator=task.creator_id,
+            executor=task.executor_email,
+            project_id=task.project_id
+        ))
+    return response_tasks
+
+
+def view_project_tasks(db: Session, project_id: UUID, user_id: UUID):
+    db_user = db.query(User).filter(User.id == user_id).one_or_none()
+    db_project = db.query(Project).filter(Project.id == project_id).one_or_none()
+
+    if not db_project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    if db_user not in db_project.users and not db_user.is_admin:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    tasks = db.query(Task).filter(Task.project_id == project_id).all()
+    response_tasks = []
+    for task in tasks:
+        sub_tasks = task.sub_tasks
+        temp_sub_tasks = []
+        for sub_task in sub_tasks:
+            temp_sub_tasks.append(SubTaskSchemas(
+                name=sub_task.name,
+                executor_email=sub_task.executor_email,
+                description=sub_task.description,
+                due_date=sub_task.due_date,
+                task_id=sub_task.task_id,
+                indicator=sub_task.indicator,
+            ))
+        response_tasks.append(TaskWithSubTasks(
+            name=task.name,
+            description=task.description,
+            due_date=task.due_date,
+            indicator=task.indicator,
+            creator=task.creator_id,
+            executor=task.executor_email,
+            project_id=task.project_id,
+            sub_tasks=temp_sub_tasks
+        ))
+    return response_tasks
 
 
 def patch_task(db: Session, payload: TaskPatch, user_id: UUID):

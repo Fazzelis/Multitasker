@@ -65,7 +65,6 @@ class Category(Base):
         "Project",
         secondary=category_project_association,
         back_populates="categories",
-        cascade="all, delete",
         lazy="dynamic"
     )
 
@@ -73,7 +72,7 @@ class Category(Base):
 class Project(Base):
     __tablename__ = "project"
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, server_default=func.gen_random_uuid())
-    name = Column(String, unique=True)
+    name = Column(String)
     creator_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
     creator = relationship("User", foreign_keys=[creator_id])
     tasks = relationship("Task", back_populates="project", cascade="all, delete-orphan")

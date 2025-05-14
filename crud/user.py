@@ -34,6 +34,10 @@ def patch_user_password(db: Session, user: User, new_password_hash: str) -> None
 
 
 def post_reset_code(db: Session, hashed_code: str, db_user: User) -> ResetCode | None:
+    optional_db_code = db.query(ResetCode).filter(ResetCode.user_id == db_user.id).one_or_none()
+    if optional_db_code:
+        db.delete(optional_db_code)
+        db.commit()
     db_code = ResetCode(hashed_code=hashed_code, expiration_time=((datetime.now() + timedelta(minutes=30)).time()), user_id=db_user.id)
     db.add(db_code)
     db.commit()

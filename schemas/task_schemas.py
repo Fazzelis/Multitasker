@@ -1,8 +1,10 @@
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, conint, EmailStr
 from uuid import UUID
 from datetime import date
+
+from schemas.sub_task_schemas import SubTaskSchemas
 
 
 class TaskBase(BaseModel):
@@ -13,6 +15,17 @@ class TaskBase(BaseModel):
     creator: UUID
     executor: EmailStr
     project_id: UUID
+
+
+class TaskWithSubTasks(BaseModel):
+    name: str
+    description: str
+    due_date: date
+    indicator: conint(ge=0, le=4)
+    creator: UUID
+    executor: EmailStr
+    project_id: UUID
+    sub_tasks: List[SubTaskSchemas]
 
 
 class TaskCreate(BaseModel):

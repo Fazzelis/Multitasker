@@ -24,7 +24,7 @@ def match_hash(password: str, password_hash: str) -> bool:
 
 
 def generate_and_send_verify_code(to_email: str) -> str:
-    # Подключение к серверу ддя отправки сообщения на почту
+    # Подключение к серверу для отправки сообщения на почту
     server = smtplib.SMTP(os.getenv("SMTP_SERVER"), int(os.getenv("PORT")))
     server.starttls()
     server.ehlo()

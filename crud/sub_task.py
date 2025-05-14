@@ -74,6 +74,25 @@ def get_sub_task(db: Session, sub_task_id: UUID, user_id: UUID) -> SubTaskInfo:
     )
 
 
+def get_my_sub_tasks(db: Session, user_id: UUID):
+    db_user = db.query(User).filter(User.id == user_id).one_or_none()
+    sub_tasks = db.query(SubTask).filter(SubTask.executor_email.like(db_user.email)).all()
+
+    response_sub_tasks = []
+    for sub_task in sub_tasks:
+        response_sub_tasks.append(SubTaskInfo(
+            sub_task_id=sub_task.id,
+            name=sub_task.name,
+            executor_email=sub_task.executor_email,
+            description=sub_task.description,
+            due_date=sub_task.due_date,
+            task_id=sub_task.task_id,
+            indicator=sub_task.indicator,
+            creator_id=sub_task.creator_id,
+        ))
+    return response_sub_tasks
+
+
 def patch_sub_task(db: Session, payload: SubTaskPatch, user_id: UUID):
     db_sub_task = db.query(SubTask).filter(SubTask.id == payload.sub_task_id).one_or_none()
     if not db_sub_task:

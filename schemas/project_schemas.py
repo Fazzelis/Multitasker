@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 from schemas.user_schemas import UserProfileWithoutPassword
 
@@ -32,7 +32,12 @@ class ProjectDtoInfo(ProjectDto):
 
 class ProjectDtoWithMemberId(BaseModel):
     project_id: UUID
-    new_member_id: UUID
+    member_id: UUID
+
+
+class ProjectDtoWithMemberEmail(BaseModel):
+    project_id: UUID
+    member_email: EmailStr
 
 
 class ProjectDtoWithCategoryId(BaseModel):

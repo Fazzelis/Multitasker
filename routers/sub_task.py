@@ -3,7 +3,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from database.get_database import get_db
-from schemas.response.sub_task import SubTaskResponse, SubTaskDeleteResponse, SubTaskCreateResponse
+from schemas.response.sub_task import SubTaskResponse, SubTaskDeleteResponse, SubTaskCreateResponse, MySubTasks
 from schemas.sub_task_schemas import SubTaskInfo, SubTaskPatch, SubTaskGetDelete, SubTaskSchemas
 from service.sub_task_service import SubTaskService
 
@@ -31,6 +31,14 @@ def sub_task_info(
         db: Session = Depends(get_db)
 ):
     return SubTaskService(db).sub_task_info(payload, credentials)
+
+
+@router.get("/get-my-sub-tasks", response_model=MySubTasks)
+def get_my_sub_tasks(
+        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+        db: Session = Depends(get_db)
+):
+    return SubTaskService(db).get_my_sub_tasks(credentials)
 
 
 @router.patch("/patch-sub-task", response_model=SubTaskResponse)

@@ -46,7 +46,7 @@ def get_all_projects(
 
 @router.patch("/add-member-into-project", response_model=ProjectResponse)
 def add_member_into_project(
-        payload: ProjectDtoWithMemberId,
+        payload: ProjectDtoWithMemberEmail,
         credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
         db: Session = Depends(get_db)
 ):

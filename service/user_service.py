@@ -2,7 +2,7 @@ from fastapi import UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
 from schemas.user_schemas import *
 from fastapi.security import HTTPAuthorizationCredentials
-from utils import decode_jwt, generate_and_send_verify_code, match_hash
+from utils import decode_jwt, generate_and_send_verify_code, match_hash, get_password_hash
 import uuid
 from crud.user import *
 from jwt import ExpiredSignatureError
@@ -71,7 +71,7 @@ class UserService:
         if found_code is None:
             raise HTTPException(status_code=400, detail="Reset code for this user not found")
         if match_hash(payload.verify_code, found_code.hashed_code):
-            if datetime.now().time() > found_code.hashed_code:
+            if datetime.now().time() > found_code.expiration_time:
                 raise HTTPException(status_code=400, detail="The verify code has expired")
             patch_user_password(self.db, found_code.user, get_password_hash(payload.new_password))
             delete_reset_code(self.db, found_code)
