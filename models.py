@@ -36,7 +36,7 @@ class User(Base):
         back_populates="users",
         lazy="dynamic"
     )
-    tasks = relationship("Task", back_populates="user")
+    tasks = relationship("Task", back_populates="creator")
     subtasks = relationship("SubTask", back_populates="user")
 
 
@@ -94,14 +94,15 @@ class Project(Base):
 class Task(Base):
     __tablename__ = "task"
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, server_default=func.gen_random_uuid())
-    name = Column(String, unique=True)
+    name = Column(String)
     description = Column(String)
     due_date = Column(Date)
     indicator = Column(Integer)
     project_id = Column(UUID(as_uuid=True), ForeignKey("project.id", ondelete="CASCADE"))
     project = relationship("Project", back_populates="tasks")
-    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
-    user = relationship("User", back_populates="tasks")
+    creator_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
+    creator = relationship("User", back_populates="tasks")
+    executor_id = Column(UUID(as_uuid=True))
     sub_tasks = relationship("SubTask", back_populates="task", cascade="all, delete-orphan", lazy="joined")
 
 

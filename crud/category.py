@@ -31,6 +31,7 @@ def post_category(db: Session, user_id: UUID, category_name: str):
     db.add(new_category)
     db.commit()
     return CategoryDto(
+        category_id=new_category.id,
         name=new_category.name
     )
 
@@ -49,7 +50,9 @@ def patch_category(db: Session, user_id: UUID, category_id: UUID, new_category_n
     category.name = new_category_name
     db.add(category)
     db.commit()
+    db.refresh(category)
     return CategoryDto(
+        category_id=category.id,
         name=new_category_name
     )
 
@@ -61,5 +64,6 @@ def delete_category(db: Session, user_id: UUID, category_id: UUID):
     db.delete(category)
     db.commit()
     return CategoryDto(
+        category_id=category.id,
         name=category.name
     )

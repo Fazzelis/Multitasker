@@ -1,4 +1,7 @@
+import mimetypes
+
 from fastapi import UploadFile, File
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from schemas.response.attachment import *
 from crud.attachment import *
@@ -17,6 +20,21 @@ class AttachmentService:
         return AttachmentResponse(
             status="success",
             attachment_info=post_file(self.db, file)
+        )
+
+    def get_file(self, file_id: UUID):
+        db_file = get_attachment_info(self.db, file_id)
+        if not os.path.exists(db_file.path):
+            raise HTTPException(status_code=404, detail="File not found in directory")
+        filename = os.path.basename(db_file.path)
+        mime_type, _ = mimetypes.guess_type(db_file.path)
+        if mime_type is None:
+            mime_type = "application/octet-stream"
+        return FileResponse(
+            path=db_file.path,
+            filename=filename,
+            media_type=mime_type,
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
         )
 
     def delete_file(self, payload: AttachmentDelete):

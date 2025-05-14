@@ -6,18 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="2111607b-19b3-43c4-b7f3-f6a3d76f334f" name="Changes" comment="fix bugs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crud/category.py" beforeDir="false" afterPath="$PROJECT_DIR$/crud/category.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crud/project.py" beforeDir="false" afterPath="$PROJECT_DIR$/crud/project.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crud/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/crud/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crud/task.py" beforeDir="false" afterPath="$PROJECT_DIR$/crud/task.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routers/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/routers/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routers/attachment.py" beforeDir="false" afterPath="$PROJECT_DIR$/routers/attachment.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routers/category.py" beforeDir="false" afterPath="$PROJECT_DIR$/routers/category.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routers/project.py" beforeDir="false" afterPath="$PROJECT_DIR$/routers/project.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routers/routers.py" beforeDir="false" afterPath="$PROJECT_DIR$/routers/routers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routers/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/routers/user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schemas/category_schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas/category_schemas.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/schemas/project_schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas/project_schemas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/schemas/response/project.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas/response/project.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service/auth_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/service/auth_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schemas/task_schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/schemas/task_schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/attachment_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/service/attachment_service.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/category_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/service/category_service.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service/project_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/service/project_service.py" afterDir="false" />
     </list>
@@ -138,7 +137,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746101020791</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="fix bugs">
+      <option name="closed" value="true" />
+      <created>1747129246018</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1747129246018</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="UnknownFeatures">

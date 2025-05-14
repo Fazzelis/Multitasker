@@ -16,7 +16,7 @@ class CategoryService:
 
     def create_category(
             self,
-            new_category: CategoryDto,
+            new_category: CategoryDtoCreate,
             credentials: HTTPAuthorizationCredentials
     ):
         try:
@@ -58,7 +58,7 @@ class CategoryService:
             user_id = payload["sub"]
             return CategoryResponse(
                 status="success",
-                category=patch_category(self.db, uuid.UUID(user_id), category.id, category.new_name)
+                category=patch_category(self.db, uuid.UUID(user_id), category.category_id, category.new_name)
             )
         except ExpiredSignatureError:
             raise HTTPException(status_code=401, detail="token expired")
@@ -76,7 +76,7 @@ class CategoryService:
             user_id = decoded_token["sub"]
             return CategoryResponse(
                 status="success",
-                category=delete_category(self.db, uuid.UUID(user_id), payload.id)
+                category=delete_category(self.db, uuid.UUID(user_id), payload.category_id)
             )
         except ExpiredSignatureError:
             raise HTTPException(status_code=401, detail="token expired")

@@ -20,7 +20,7 @@ http_bearer = HTTPBearer()
 
 @router.post("/create-category", response_model=CategoryResponse)
 def create_category(
-        new_category: CategoryDto,
+        new_category: CategoryDtoCreate,
         credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
         db: Session = Depends(get_db)
 ):

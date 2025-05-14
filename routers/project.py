@@ -20,7 +20,7 @@ http_bearer = HTTPBearer()
 
 @router.post("/create-project", response_model=ProjectResponse)
 def create_project(
-        payload: ProjectDto,
+        payload: ProjectDtoCreate,
         credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
         db: Session = Depends(get_db)
 ):

@@ -7,10 +7,16 @@ from schemas.user_schemas import UserProfileWithoutPassword
 
 
 class ProjectDto(BaseModel):
+    project_id: UUID
     name: str
 
 
-class ProjectDtoPatch(ProjectDto):
+class ProjectDtoCreate(BaseModel):
+    name: str
+
+
+class ProjectDtoPatch(BaseModel):
+    project_id: UUID
     new_name: str
 
 
@@ -24,7 +30,7 @@ class ProjectDtoInfo(ProjectDto):
 
 
 class ProjectDtoWithMemberId(BaseModel):
-    id: UUID
+    project_id: UUID
     new_member_id: UUID
 
 

@@ -29,12 +29,13 @@ def post_project(db: Session, project_name: str, user_id: UUID):
     db.commit()
     db.refresh(new_project)
     return ProjectDto(
+        project_id=new_project.id,
         name=new_project.name
     )
 
 
-def patch_project(db: Session, old_project_name: str, new_project_name: str, user_id: UUID) -> ProjectDto:
-    project = db.query(Project).filter(Project.user_id == user_id).filter(Project.name.like(old_project_name)).one_or_none()
+def patch_project(db: Session, project_id: UUID, new_project_name: str, user_id: UUID) -> ProjectDto:
+    project = db.query(Project).filter(Project.creator_id == user_id).filter(Project.id == project_id).one_or_none()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
     project.name = new_project_name
@@ -42,6 +43,7 @@ def patch_project(db: Session, old_project_name: str, new_project_name: str, use
     db.commit()
     db.refresh(project)
     return ProjectDto(
+        project_id=project.id,
         name=new_project_name
     )
 
@@ -60,6 +62,7 @@ def get_all_projects(db: Session, user_id: UUID) -> [ProjectDtoInfo]:
                 avatar_id=user.avatar_id
             ))
         response.append(ProjectDtoInfo(
+            project_id=db_project.id,
             name=db_project.name,
             creator_id=db_project.creator_id,
             members=temp_users_dto
@@ -84,7 +87,9 @@ def add_member_into_project(db: Session, user_id: UUID, member_id: UUID, project
         raise HTTPException(status_code=409, detail="User already member")
     db.add(db_project)
     db.commit()
+    db.refresh(db_project)
     return ProjectDto(
+        project_id=db_project.id,
         name=db_project.name
     )
 
@@ -102,7 +107,9 @@ def add_category(db: Session, user_id: UUID, project_id: UUID, category_id: UUID
     db_category.projects.append(db_project)
     db.add(db_category)
     db.commit()
+    db.refresh(db_project)
     return ProjectDto(
+        project_id=db_project.id,
         name=db_project.name
     )
 
@@ -119,6 +126,7 @@ def remove_category(db: Session, user_id: UUID, project_id: UUID) -> ProjectDto:
         raise HTTPException(status_code=404, detail="Category not found")
     db_category.projects.remove(db_project)
     return ProjectDto(
+        project_id=db_project.id,
         name=db_project.name
     )
 
@@ -134,10 +142,12 @@ def delete_project(db: Session, user_id: UUID, project_id: UUID) -> ProjectDto:
             db.add(db_project)
             db.commit()
             return ProjectDto(
+                project_id=db_project.id,
                 name=db_project.name
             )
     db.delete(db_project)
     db.commit()
     return ProjectDto(
+        project_id=db_project.id,
         name=db_project.name
     )
