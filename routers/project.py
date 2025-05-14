@@ -36,12 +36,12 @@ def edit_project(
     return ProjectService(db=db).edit_project(new_project, credentials)
 
 
-@router.get("/get-all-project", response_model=AllProjectsResponse)
+@router.get("/get-projects", response_model=AllProjectsResponse)
 def get_all_projects(
         credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
         db: Session = Depends(get_db)
 ):
-    return ProjectService(db=db).get_all_projects(credentials)
+    return ProjectService(db=db).get_projects(credentials)
 
 
 @router.patch("/add-member-into-project", response_model=ProjectResponse)
@@ -51,6 +51,15 @@ def add_member_into_project(
         db: Session = Depends(get_db)
 ):
     return ProjectService(db).add_member_into_project(payload, credentials)
+
+
+@router.delete("/remove-member-from-project", response_model=ProjectRemoveMemberResponse)
+def remove_member_from_project(
+        payload: ProjectDtoWithMemberId,
+        credentials: HTTPAuthorizationCredentials = Depends(http_bearer),
+        db: Session = Depends(get_db)
+):
+    return ProjectService(db).remove_member_from_project(payload, credentials)
 
 
 @router.patch("/add-category", response_model=ProjectResponse)

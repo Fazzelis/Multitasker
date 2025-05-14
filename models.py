@@ -37,7 +37,7 @@ class User(Base):
         lazy="dynamic"
     )
     tasks = relationship("Task", back_populates="creator")
-    subtasks = relationship("SubTask", back_populates="user")
+    subtasks = relationship("SubTask", back_populates="creator")
 
 
 class Attachment(Base):
@@ -102,7 +102,7 @@ class Task(Base):
     project = relationship("Project", back_populates="tasks")
     creator_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
     creator = relationship("User", back_populates="tasks")
-    executor_id = Column(UUID(as_uuid=True))
+    executor_email = Column(String)
     sub_tasks = relationship("SubTask", back_populates="task", cascade="all, delete-orphan", lazy="joined")
 
 
@@ -112,7 +112,9 @@ class SubTask(Base):
     name = Column(String, unique=True)
     description = Column(String)
     due_date = Column(Date)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
-    user = relationship("User", back_populates="subtasks")
+    creator_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
+    creator = relationship("User", back_populates="subtasks")
     task_id = Column(UUID(as_uuid=True), ForeignKey("task.id", ondelete="CASCADE"))
     task = relationship("Task", back_populates="sub_tasks")
+    executor_email = Column(String)
+    indicator = Column(Integer)

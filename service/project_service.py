@@ -4,7 +4,6 @@ from fastapi import File
 from fastapi.security import HTTPAuthorizationCredentials
 from jwt import ExpiredSignatureError
 from sqlalchemy.orm import Session
-
 from crud.project import *
 from schemas.project_schemas import *
 from utils import *
@@ -49,7 +48,7 @@ class ProjectService:
         except HTTPException as error:
             raise error
 
-    def get_all_projects(
+    def get_projects(
             self,
             credentials: HTTPAuthorizationCredentials
     ) -> AllProjectsResponse:
@@ -59,7 +58,7 @@ class ProjectService:
             user_id = uuid.UUID(payload.get("sub"))
             return AllProjectsResponse(
                 status="success",
-                projects=get_all_projects(self.db, user_id)
+                projects=get_projects(self.db, user_id)
             )
         except ExpiredSignatureError:
             raise HTTPException(status_code=401, detail="token expired")
@@ -76,6 +75,27 @@ class ProjectService:
             return ProjectResponse(
                 status="success",
                 project=add_member_into_project(self.db, user_id, payload.new_member_id, payload.project_id)
+            )
+        except ExpiredSignatureError:
+            raise HTTPException(status_code=401, detail="token expired")
+
+    def remove_member_from_project(
+            self,
+            payload: ProjectDtoWithMemberId,
+            credentials: HTTPAuthorizationCredentials
+    ) -> ProjectRemoveMemberResponse:
+        try:
+            token = credentials.credentials
+            decoded_jwt = decode_jwt(token)
+            user_id = uuid.UUID(decoded_jwt.get("sub"))
+            return ProjectRemoveMemberResponse(
+                status="success",
+                project=remove_member_from_project(
+                    db=self.db,
+                    member_id=payload.new_member_id,
+                    project_id=payload.project_id,
+                    user_id=user_id
+                )
             )
         except ExpiredSignatureError:
             raise HTTPException(status_code=401, detail="token expired")

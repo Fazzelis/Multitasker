@@ -48,7 +48,7 @@ def patch_project(db: Session, project_id: UUID, new_project_name: str, user_id:
     )
 
 
-def get_all_projects(db: Session, user_id: UUID) -> [ProjectDtoInfo]:
+def get_projects(db: Session, user_id: UUID) -> [ProjectDtoInfo]:
     db_user = db.query(User).filter(User.id == user_id).one_or_none()
     db_projects = db_user.projects.all()
     response = []
@@ -61,9 +61,15 @@ def get_all_projects(db: Session, user_id: UUID) -> [ProjectDtoInfo]:
                 name=user.name,
                 avatar_id=user.avatar_id
             ))
+        db_category = db_project.categories.filter(Category.user_id == db_user.id).one_or_none()
+        if not db_category:
+            category_name = None
+        else:
+            category_name = db_category.name
         response.append(ProjectDtoInfo(
             project_id=db_project.id,
             name=db_project.name,
+            category_name=category_name,
             creator_id=db_project.creator_id,
             members=temp_users_dto
         ))
@@ -91,6 +97,58 @@ def add_member_into_project(db: Session, user_id: UUID, member_id: UUID, project
     return ProjectDto(
         project_id=db_project.id,
         name=db_project.name
+    )
+
+
+def remove_member_from_project(db: Session, member_id: UUID, project_id: UUID, user_id: UUID):
+    db_project = db.query(Project).filter(Project.id == project_id).one_or_none()
+    if not db_project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    db_user = db.query(User).filter(User.id == user_id).one_or_none()
+    if db_user.id != db_project.creator_id and not db_user.is_admin:
+        raise HTTPException(status_code=403, detail="Access denied")
+    db_member = db.query(User).filter(User.id == member_id).one_or_none()
+    if not db_member:
+        raise HTTPException(status_code=404, detail="Member not found")
+    if db_member not in db_project.users:
+        raise HTTPException(status_code=400, detail="Member already not in project")
+    if db_project.creator_id == member_id:
+        raise HTTPException(status_code=400, detail="You can`t remove the creator")
+    flag = False
+    tasks = db_project.tasks
+    for task in tasks:
+        if task.creator_id == member_id or task.executor_email == db_member.email:
+            flag = True
+            break
+    if flag:
+        raise HTTPException(status_code=400, detail="The member has uncompleted tasks or tasks that he created")
+
+    db_project.users.remove(db_member)
+    db.add(db_project)
+    db.commit()
+    db.refresh(db_project)
+
+    category = db_project.categories.filter(Category.user_id == user_id).one_or_none()
+    if not category:
+        category_name = None
+    else:
+        category_name = category.name
+
+    members = [
+        UserProfileWithoutPassword(
+            email=user.email,
+            name=user.name,
+            avatar_id=user.avatar_id
+        )
+        for user in db_project.users
+    ]
+
+    return ProjectDtoInfo(
+        project_id=db_project.id,
+        name=db_project.name,
+        creator_id=db_project.creator_id,
+        category_name=category_name,
+        members=members
     )
 
 

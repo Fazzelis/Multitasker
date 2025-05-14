@@ -26,6 +26,7 @@ class ProjectDtoDelete(BaseModel):
 
 class ProjectDtoInfo(ProjectDto):
     creator_id: UUID
+    category_name: str | None
     members: List[UserProfileWithoutPassword]
 
 

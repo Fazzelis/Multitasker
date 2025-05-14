@@ -10,6 +10,11 @@ class ProjectResponse(BaseModel):
     project: ProjectDto
 
 
+class ProjectRemoveMemberResponse(BaseModel):
+    status: str
+    project: ProjectDtoInfo
+
+
 class AllProjectsResponse(BaseModel):
     status: str
     projects: List[ProjectDtoInfo]
