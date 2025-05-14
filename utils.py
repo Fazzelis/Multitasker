@@ -50,6 +50,31 @@ def generate_and_send_verify_code(to_email: str) -> str:
     return get_password_hash(reset_token)
 
 
+def invite_member_into_project(to_email: str) -> str:
+    # Подключение к серверу для отправки сообщения на почту
+    server = smtplib.SMTP(os.getenv("SMTP_SERVER"), int(os.getenv("PORT")))
+    server.starttls()
+    server.ehlo()
+
+    # Вход в аккаунт, с которого будем отправлять сообщение
+    from_email = os.getenv("EMAIL_LOGIN")
+    server.login(from_email, os.getenv("EMAIL_PASSWORD"))
+
+    # Заполнение сообщения
+    subject = "Multitasker"
+    body = f"Поздравляю, вы были приглашены в проект! Вот ссылка на регистрацию в нашем приложении:\nhttp://127.0.0.1:8000/docs#/Authentication/register_auth_register_user_post"
+
+    msg = MIMEText(body, "plain", "utf-8")
+    msg["Subject"] = Header(subject, "utf-8")
+    msg["From"] = from_email
+    msg["To"] = to_email
+
+    # Отправка сообщения
+    server.sendmail(from_email, to_email, msg.as_string())
+
+    server.quit()
+
+
 def save_file(file) -> str:
     filename = f"{uuid.uuid4()}.{file.filename.split('.')[-1]}"
     file_path = os.path.join("attachments", filename)

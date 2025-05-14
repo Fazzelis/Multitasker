@@ -1,7 +1,8 @@
 from typing import List
 
 from pydantic import BaseModel
-from schemas.task_schemas import *
+
+from schemas.task_schemas import TaskBase, TaskWithSubTasks
 
 
 class TaskResponse(BaseModel):

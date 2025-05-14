@@ -1,13 +1,13 @@
-from fastapi import APIRouter, File
-from fastapi.security import HTTPBearer
+from fastapi import APIRouter, File, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jwt import ExpiredSignatureError
+from sqlalchemy.orm import Session
+
 from database.get_database import get_db
-from crud.project import *
-from crud.user import *
-from utils import *
-from schemas.project_schemas import *
+from schemas.project_schemas import ProjectDtoCreate, ProjectDtoPatch, ProjectDtoWithMemberEmail, \
+    ProjectDtoWithMemberId, ProjectDtoWithCategoryId, ProjectDtoWithId, ProjectDtoDelete
+from schemas.response.project import ProjectResponse, AllProjectsResponse, ProjectRemoveMemberResponse
 from service.project_service import ProjectService
-from schemas.response.project import *
 
 
 router = APIRouter(

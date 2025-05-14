@@ -3,7 +3,7 @@ from jwt import ExpiredSignatureError
 from sqlalchemy.orm import Session
 from fastapi.security import HTTPAuthorizationCredentials
 
-from crud.sub_task import post_sub_task, get_sub_task, patch_sub_task, delete_sub_task, get_my_sub_tasks
+from service_utils.sub_task import post_sub_task, get_sub_task, patch_sub_task, delete_sub_task, get_my_sub_tasks
 from schemas.response.sub_task import SubTaskResponse, SubTaskDeleteResponse, SubTaskCreateResponse, MySubTasks
 from schemas.sub_task_schemas import SubTaskInfo, SubTaskPatch, SubTaskGetDelete, SubTaskSchemas
 from utils import decode_jwt

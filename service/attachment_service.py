@@ -1,12 +1,15 @@
 import mimetypes
+from uuid import UUID
 
-from fastapi import UploadFile, File
+from fastapi import UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
-from schemas.response.attachment import *
-from crud.attachment import *
 import os
 from pathlib import Path
+
+from schemas.attachment_schemas import AttachmentDelete
+from schemas.response.attachment import AttachmentResponse
+from service_utils.attachment import post_file, get_attachment_info, delete_attachment
 
 
 class AttachmentService:

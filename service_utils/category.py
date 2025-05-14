@@ -1,19 +1,9 @@
-from fastapi import Depends, HTTPException, UploadFile
-from fastapi.security import HTTPAuthorizationCredentials
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import exists
-import uuid
-from datetime import datetime, timedelta
-
-from models import *
-from schemas.user_schemas import *
-from schemas.token_schemas import *
-from schemas.category_schemas import *
-from schemas.project_schemas import *
-from schemas.task_schemas import *
-from schemas.sub_task_schemas import *
-from utils import *
-from schemas.response.category import *
+from uuid import UUID
+from models import Category
+from schemas.category_schemas import CategoryDto
 
 
 def post_category(db: Session, user_id: UUID, category_name: str):

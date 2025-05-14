@@ -1,18 +1,11 @@
-from fastapi import Depends, HTTPException, UploadFile
-from fastapi.security import HTTPAuthorizationCredentials
+from uuid import UUID
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
-import uuid
-from datetime import datetime, timedelta
 
-from models import *
-from schemas.user_schemas import *
-from schemas.token_schemas import *
-from schemas.category_schemas import *
-from schemas.project_schemas import *
-from schemas.task_schemas import *
-from schemas.sub_task_schemas import *
-from utils import *
-from sqlalchemy import exists
+from models import Project, User, Category
+from schemas.project_schemas import ProjectDto, ProjectDtoInfo
+from schemas.user_schemas import UserProfileWithoutPassword
+from utils import invite_member_into_project
 
 
 def post_project(db: Session, project_name: str, user_id: UUID):
@@ -89,8 +82,8 @@ def add_member_into_project(db: Session, user_id: UUID, member_email: str, proje
         raise HTTPException(status_code=403, detail="Access denied")
     db_new_member = db.query(User).filter(User.email.like(member_email)).one_or_none()
     if not db_new_member:
-        # Написать логику приглашения в приложение с помощью отправки сообщения на почту
-        raise HTTPException(status_code=404, detail="User not found")
+        invite_member_into_project(member_email)
+        raise HTTPException(status_code=404, detail="The user was invited to the project")
     if db_new_member not in db_project.users:
         db_project.users.append(db_new_member)
     else:

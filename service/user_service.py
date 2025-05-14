@@ -1,15 +1,17 @@
 from fastapi import UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
-from schemas.user_schemas import *
 from fastapi.security import HTTPAuthorizationCredentials
+
+from schemas.response.status import StatusResponse
+from schemas.response.user import UserResponse
+from schemas.user_schemas import NewUserName, UserSetAvatar, UserBase, UserNewPassword
+from service_utils.user import patch_user_name, patch_user_avatar, get_user_by_email, post_reset_code, get_reset_code, \
+    patch_user_password, delete_reset_code, get_user_via_jwt, path_user_email
 from utils import decode_jwt, generate_and_send_verify_code, match_hash, get_password_hash
 import uuid
-from crud.user import *
 from jwt import ExpiredSignatureError
 from datetime import datetime
-from schemas.response.user import *
-from schemas.response.status import *
-from crud.attachment import get_attachment_info
+from service_utils.attachment import get_attachment_info
 
 
 class UserService:

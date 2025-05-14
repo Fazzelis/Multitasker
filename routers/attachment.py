@@ -1,10 +1,12 @@
+from uuid import UUID
+
 from fastapi import APIRouter, UploadFile, File, Depends
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from database.get_database import get_db
-from schemas.response.attachment import *
+from schemas.attachment_schemas import AttachmentDelete
+from schemas.response.attachment import AttachmentResponse
 from service.attachment_service import AttachmentService
-from schemas.attachment_schemas import *
 
 router = APIRouter(
     prefix="/attachment",

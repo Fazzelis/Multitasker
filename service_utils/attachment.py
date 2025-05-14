@@ -1,8 +1,10 @@
+from uuid import UUID
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from models import Attachment
+from schemas.attachment_schemas import AttachmentInfo
 from utils import save_file
-from schemas.attachment_schemas import *
 
 
 def post_file(

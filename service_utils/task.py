@@ -1,8 +1,11 @@
+from uuid import UUID
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from models import Project, Task, User
-from schemas.task_schemas import *
+from schemas.sub_task_schemas import SubTaskSchemas
+from schemas.task_schemas import TaskCreate, TaskBase, TaskWithSubTasks, TaskPatch
 
 
 def post_task(db: Session, payload: TaskCreate, user_id: UUID):

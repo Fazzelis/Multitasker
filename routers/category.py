@@ -1,13 +1,12 @@
-from fastapi import APIRouter
-from fastapi.security import HTTPBearer
+from fastapi import APIRouter, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jwt import ExpiredSignatureError
+from sqlalchemy.orm import Session
+
 from database.get_database import get_db
-from crud.category import *
-from crud.user import *
-from utils import *
-from schemas.category_schemas import *
+from schemas.category_schemas import CategoryDtoCreate, CategoryDtoPatch, CategoryDtoDelete
+from schemas.response.category import CategoryResponse
 from service.category_service import CategoryService
-from schemas.response.category import *
 
 
 router = APIRouter(

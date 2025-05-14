@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from crud.user import get_user_by_email, post_user
+from service_utils.user import get_user_by_email, post_user
 from schemas.response.auth import AuthorizationRegistrationResponse
 from schemas.token_schemas import TokenInfo
 from schemas.user_schemas import UserCreateAndAuthorization

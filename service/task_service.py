@@ -4,11 +4,11 @@ from fastapi import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials
 
 from schemas.project_schemas import ProjectDtoWithId
-from schemas.task_schemas import *
+from schemas.response.task import TaskResponse, MyTasksResponse, ProjectTasksResponse
+from schemas.task_schemas import TaskCreate, TaskPatch, TaskDelete
+from service_utils.task import post_task, get_my_tasks, view_project_tasks, patch_task, delete_task
 from utils import decode_jwt
 import uuid
-from crud.task import *
-from schemas.response.task import *
 
 
 class TaskService:

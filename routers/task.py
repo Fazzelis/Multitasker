@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from schemas.project_schemas import ProjectDtoWithId
-from schemas.task_schemas import *
 from sqlalchemy.orm import Session
 from database.get_database import get_db
+from schemas.response.task import TaskResponse, MyTasksResponse, ProjectTasksResponse
+from schemas.task_schemas import TaskCreate, TaskPatch, TaskDelete
 from service.task_service import TaskService
-from schemas.response.task import *
 
 
 router = APIRouter(
